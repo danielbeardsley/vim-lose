@@ -6,7 +6,8 @@ let g:loaded_lose = 1
 function! lose#lose(name)
    let rawPath = &path
    let pathDir = substitute(rawPath, "**", "", "g")
-   let findOutput = system('find '.pathDir.' | grep "/'.a:name.'$"')
+   let findCmd = 'find '.pathDir.' -name "*'.a:name.'*" -not -name "*.swp"'
+   let findOutput = system(findCmd)
    let matchedFiles = split(findOutput, "\n")
 
    if len(matchedFiles) == 0
