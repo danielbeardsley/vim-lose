@@ -17,8 +17,9 @@ function! lose#lose(name, ...)
    " Lets be safe about this
    let name = shellescape('*'.a:name.'*') 
    let exclusions = lose#getFileExclusions()
-   let otherOptions = exclusions . ' ' . ' -type f'
-   let findCmd = 'find '.pathDir.' -'.fieldName.' '.name.otherOptions
+   let search = '-'.fieldName.' '.name.' '
+   let otherOptions = ' -type f -print'
+   let findCmd = 'find '.pathDir.exclusions.' -prune -o '.search.otherOptions
    let findOutput = system(findCmd)
    let matchedFiles = split(findOutput, "\n")
 
@@ -57,14 +58,14 @@ endfunc
 
 " Returns a string that GNU find can use to exclude files.
 function! lose#getFileExclusions()
-   let exclusions = ' -not -name "*.sw?" -not -wholename "*/.git/*" '
+   let exclusions = '-name "*.sw?" '
 
    " Include wildignore files too.
    for file in split(&wildignore, ',')
-      let exclusions = exclusions . ' -not -name "' . shellescape(file) . '" '
+      let exclusions = exclusions . ' -o -name ' . shellescape(file) . ' '
    endfor
 
-   return exclusions
+   return ' \( '.exclusions.' \)'
 endfunc
 
 command! -nargs=* Lose call lose#lose(<f-args>)
