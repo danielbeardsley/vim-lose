@@ -62,7 +62,7 @@ function! lose#getFileExclusions()
 
    " Include wildignore files too.
    for file in split(&wildignore, ',')
-      let exclusions = exclusions . ' -o -name ' . shellescape(file) . ' '
+      let exclusions = exclusions . ' -o -wholename ' . shellescape(file) . ' '
    endfor
 
    return ' \( '.exclusions.' \)'
